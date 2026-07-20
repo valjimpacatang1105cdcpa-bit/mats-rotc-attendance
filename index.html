@@ -276,13 +276,36 @@ const response = await fetch(API_URL + "?qr=" + encodeURIComponent(decodedText))
 
 const data = await response.json();
 
-if(data.success){
+if (data.success) {
 
-status.className = "status success";
-status.innerHTML = "✅ ATTENDANCE RECORDED";
-document.getElementById("student").innerHTML=data.student;
+    status.className = "status success";
+    status.innerHTML = "✅ ATTENDANCE RECORDED";
 
-document.getElementById("time").innerHTML="Time In: "+data.time;
+    document.getElementById("student").innerHTML = data.student;
+
+    document.getElementById("time").innerHTML =
+        "Time In: " + data.time;
+
+} else if (data.alreadyRecorded) {
+
+    status.className = "status error";
+    status.innerHTML = "⚠️ ATTENDANCE ALREADY RECORDED";
+
+    document.getElementById("student").innerHTML = data.student;
+
+    document.getElementById("time").innerHTML =
+        "First Scan: " + data.time;
+
+} else {
+
+    status.className = "status error";
+    status.innerHTML = "❌ " + data.message;
+
+    document.getElementById("student").innerHTML = "";
+
+    document.getElementById("time").innerHTML = "";
+
+}
 
 }else{
 
