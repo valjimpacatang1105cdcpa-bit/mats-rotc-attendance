@@ -293,6 +293,48 @@ const API_URL =
 //-----------------------------------------
 
 let scanner = null;
+
+ //-----------------------------------------
+// START QR SCANNER
+//-----------------------------------------
+
+function startScanner(){
+
+    scanner = new Html5Qrcode("reader");
+
+    Html5Qrcode.getCameras().then(cameras=>{
+
+        if(cameras.length==0){
+
+            document.getElementById("status").innerHTML="❌ No Camera Found";
+            return;
+
+        }
+
+        scanner.start(
+
+            { facingMode:"environment" },
+
+            {
+                fps:10,
+                qrbox:250
+            },
+
+            function(decodedText){
+
+                scanner.stop();
+
+                document.getElementById("status").innerHTML="⏳ Processing...";
+
+                // dito natin ilalagay ang API sa susunod na step
+
+            }
+
+        );
+
+    });
+
+}
 </script>
 
 </body>
