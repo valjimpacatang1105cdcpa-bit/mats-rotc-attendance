@@ -326,14 +326,67 @@ function startScanner(){
 
             function(decodedText){
 
-                scanner.stop();
+    scanner.stop();
 
-                document.getElementById("status").innerHTML =
-                "⏳ Processing...";
+    document.getElementById("status").innerHTML =
+    "⏳ Processing...";
 
-                // API request ilalagay natin sa susunod
+    fetch(API_URL + "?qr=" + encodeURIComponent(decodedText))
 
-            }
+    .then(response => response.json())
+
+    .then(data => {
+
+        if(data.success){
+
+            document.getElementById("status").innerHTML =
+            "✅ Attendance Recorded";
+
+            document.getElementById("student").innerHTML =
+            data.name;
+
+            document.getElementById("time").innerHTML =
+            data.time;
+
+        }else{
+
+            document.getElementById("status").innerHTML =
+            "❌ " + data.message;
+
+        }
+
+        setTimeout(function(){
+
+            document.getElementById("student").innerHTML = "";
+            document.getElementById("time").innerHTML = "";
+            document.getElementById("status").innerHTML =
+            "🟢 READY TO SCAN";
+
+            startScanner();
+
+        },3000);
+
+    })
+
+    .catch(function(error){
+
+        console.log(error);
+
+        document.getElementById("status").innerHTML =
+        "❌ Connection Error";
+
+        setTimeout(function(){
+
+            document.getElementById("status").innerHTML =
+            "🟢 READY TO SCAN";
+
+            startScanner();
+
+        },3000);
+
+    });
+
+}
 
         );
 
