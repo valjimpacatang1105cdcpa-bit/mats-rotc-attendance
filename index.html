@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MATS ROTC UNIT ATTENDANCE</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -57,71 +61,50 @@ border:3px solid #1976d2;
 }
 
 button{
-
 padding:14px 30px;
 font-size:18px;
 border:none;
 border-radius:8px;
 cursor:pointer;
 margin:10px;
-
-}
-
-#startBtn{
-
-background:#1976d2;
-color:white;
-
 }
 
 #stopBtn{
-
 background:#d32f2f;
 color:white;
-
 }
 
 .status{
-
 margin-top:25px;
 padding:18px;
 border-radius:12px;
 font-size:24px;
 font-weight:bold;
 transition:.3s;
-
 }
 
 .ready{
-
 background:#e8f5e9;
 color:#2e7d32;
 border:2px solid #4caf50;
-
 }
 
 .scanning{
-
 background:#fff8e1;
 color:#f57c00;
 border:2px solid #ff9800;
-
 }
 
 .success{
-
 background:#e3f2fd;
 color:#1565c0;
 border:2px solid #2196f3;
-
 }
 
 .error{
-
 background:#ffebee;
 color:#c62828;
 border:2px solid #f44336;
-
 }
 
 .student{
@@ -136,28 +119,49 @@ font-size:20px;
 margin-top:10px;
 color:#555;
 }
-footer{
 
+footer{
 margin-top:40px;
 padding:15px;
 background:#0d47a1;
 color:white;
-
 }
 
 </style>
 
 </head>
 
-<body>
+    <body>
 
+<header>
+
+<div style="font-size:40px;">
+🎖️ MATS ROTC UNIT ATTENDANCE
+</div>
+
+<div id="today"
+style="
+margin-top:10px;
+font-size:18px;
+font-weight:normal;">
+</div>
+
+<div id="clock"
+style="
+font-size:30px;
+margin-top:8px;
+font-weight:bold;">
+</div>
+
+</header>
 
 <div class="container">
 
 <h2>📷 Scan Student QR Code</h2>
+
 <p>Please place the QR Code inside the camera frame.</p>
+
 <div id="reader"></div>
-    
 
 <button id="stopBtn">
 
@@ -182,9 +186,10 @@ color:white;
 MATS QR Attendance System
 
 </footer>
+
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyjs55YWgb6owkyYckGoA_PlWS9VT0EdKvhjm8wEgZBcwCmfW_dsk4PwngTeurlFwBWVw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyjs55YWgb6owkyYckGoA_PlWS9VT0EdKvhjm8wEgZBcwCmfW_dsk4PwngTeurlFwBWVw/exec";
 
 let scanner;
 
@@ -213,165 +218,194 @@ function playErrorBeep() {
 
 // ==========================
 
-{
-facingMode:"environment"
-},function startScanner(){
+function startScanner(){
 
-if (scanner) {
-    return;
-}
+    if (scanner) {
+        return;
+    }
 
-scanner = new Html5Qrcode("reader");
+    scanner = new Html5Qrcode("reader");
 
-scanner.start(
+    scanner.start(
 
-{
-fps:10,
-qrbox:250
-},
+        {
+            facingMode:"environment"
+        },
 
-onScanSuccess
+        {
+            fps:10,
+            qrbox:250
+        },
 
-);
+        onScanSuccess
 
-}
+    ).catch(function(err){
 
-function stopScanner(){
+        const status = document.getElementById("status");
 
-if(scanner){
+        status.className = "status error";
+        status.innerHTML = "❌ CAMERA ERROR";
 
-scanner.stop().then(function(){
+        console.log(err);
 
-scanner = null;
-
-});
-
-}
+    });
 
 }
-    async function onScanSuccess(decodedText){
 
-const status = document.getElementById("status");
+    function stopScanner(){
 
-status.className = "status scanning";
-status.innerHTML = "🟡 SCANNING...";
+    if(scanner){
 
-stopScanner();
+        scanner.stop()
+        .then(function(){
 
-status.className = "status scanning";
-status.innerHTML = "🟡 CHECKING ATTENDANCE...";
-document.getElementById("student").innerHTML="";
-document.getElementById("time").innerHTML="";
+            scanner.clear();
+            scanner = null;
 
-try{
+        })
+        .catch(function(err){
 
-const response = await fetch(API_URL + "?qr=" + encodeURIComponent(decodedText));
+            console.log(err);
+            scanner = null;
 
-const data = await response.json();
+        });
 
-if (data.success) {
+    }
 
-    status.className = "status success";
-    status.innerHTML = "✅ ATTENDANCE RECORDED";
+}
 
-    playSuccessBeep();
+async function onScanSuccess(decodedText){
 
-    document.getElementById("student").innerHTML = "👤 " + data.student;
+    const status = document.getElementById("status");
 
-    document.getElementById("time").innerHTML =
-        "🕒 Time In: " + data.time;
+    status.className = "status scanning";
+    status.innerHTML = "🟡 SCANNING...";
 
-} else if (data.alreadyRecorded) {
+    stopScanner();
 
-    status.className = "status error";
-    status.innerHTML = "⚠️ ATTENDANCE ALREADY RECORDED";
-
-    playDuplicateBeep();
-
-    document.getElementById("student").innerHTML = "👤 " + data.student;
-
-    document.getElementById("time").innerHTML =
-        "🕒 First Scan: " + data.time;
-
-} else {
-
-    status.className = "status error";
-    status.innerHTML = "❌ " + data.message;
-
-    playErrorBeep();
+    status.className = "status scanning";
+    status.innerHTML = "🟡 CHECKING ATTENDANCE...";
 
     document.getElementById("student").innerHTML = "";
-
     document.getElementById("time").innerHTML = "";
 
+    try{
+
+        const response = await fetch(
+            API_URL + "?qr=" + encodeURIComponent(decodedText)
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            status.className = "status success";
+            status.innerHTML = "✅ ATTENDANCE RECORDED";
+
+            playSuccessBeep();
+
+            document.getElementById("student").innerHTML =
+                "👤 " + data.student;
+
+            document.getElementById("time").innerHTML =
+                "🕒 Time In: " + data.time;
+
+        } else if (data.alreadyRecorded) {
+
+            status.className = "status error";
+            status.innerHTML =
+                "⚠️ ATTENDANCE ALREADY RECORDED";
+
+            playDuplicateBeep();
+
+            document.getElementById("student").innerHTML =
+                "👤 " + data.student;
+
+            document.getElementById("time").innerHTML =
+                "🕒 First Scan: " + data.time;
+
+        } else {
+
+            status.className = "status error";
+            status.innerHTML = "❌ " + data.message;
+
+            playErrorBeep();
+
+            document.getElementById("student").innerHTML = "";
+            document.getElementById("time").innerHTML = "";
+
+        }
+
+    }catch(err){
+
+        status.className = "status error";
+        status.innerHTML = "❌ CONNECTION ERROR";
+
+        playErrorBeep();
+
+        console.log(err);
+
+    }
+
+    setTimeout(function(){
+
+        status.className = "status ready";
+        status.innerHTML = "🟢 READY TO SCAN";
+
+        startScanner();
+
+    },3000);
+
 }
 
-}catch(err){
-
-status.className = "status error";
-status.innerHTML = "❌ CONNECTION ERROR";
-
-playErrorBeep();
-}
-
-setTimeout(function(){
-
-status.className = "status ready";
-status.innerHTML = "🟢 READY TO SCAN";
-
-startScanner();
-
-},3000);
-}
     // ===== LIVE DATE & CLOCK =====
 
 function updateClock() {
 
-  const now = new Date();
+    const now = new Date();
 
-  document.getElementById("today").innerHTML =
-    now.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
+    document.getElementById("today").innerHTML =
+        now.toLocaleDateString("en-US",{
+            weekday:"long",
+            year:"numeric",
+            month:"long",
+            day:"numeric"
+        });
 
-  document.getElementById("clock").innerHTML =
-    now.toLocaleTimeString("en-US");
+    document.getElementById("clock").innerHTML =
+        now.toLocaleTimeString("en-US");
 
 }
 
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 
 updateClock();
 
 // =============================
 
-    // Auto start scanner when page loads
-window.onload = function () {
+// Auto start scanner when page loads
+
+window.onload = function(){
+
     startScanner();
+
 };
 
-    // Restart scanner after stopping
-document.getElementById("stopBtn").addEventListener("click", function () {
-
-    stopScanner();
-
-    const status = document.getElementById("status");
-
-    status.className = "status error";
-    status.innerHTML = "⏹ SCANNER STOPPED";
-
-});
+// Stop Scanner Button
 
 document.getElementById("stopBtn").addEventListener("click",function(){
 
-stopScanner();
+    stopScanner();
+
+    const status=document.getElementById("status");
+
+    status.className="status error";
+    status.innerHTML="⏹ SCANNER STOPPED";
 
 });
 
 </script>
 
 </body>
+
 </html>
