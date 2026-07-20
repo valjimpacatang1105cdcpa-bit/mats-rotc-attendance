@@ -326,12 +326,14 @@ function startScanner(){
 
             function(decodedText){
 
-    scanner.stop();
+    scanner.stop()
+    .catch(function(){})
+    .finally(function(){
 
-    document.getElementById("status").innerHTML =
-    "⏳ Processing...";
+        document.getElementById("status").innerHTML =
+        "⏳ Processing...";
 
-    fetch(API_URL + "?qr=" + encodeURIComponent(decodedText))
+        fetch(API_URL + "?qr=" + encodeURIComponent(decodedText))
 
     .then(response => response.json())
 
@@ -340,12 +342,13 @@ function startScanner(){
         if(data.success){
 
             document.getElementById("status").innerHTML =
-            "✅ Attendance Recorded";
+"✅ " + data.message;
 
-            document.getElementById("student").innerHTML = data.student;
+            document.getElementById("student").innerHTML =
+data.student || "";
 
-            document.getElementById("time").innerHTML =
-            data.time;
+document.getElementById("time").innerHTML =
+data.time || "";
 
         }else{
 
@@ -403,7 +406,26 @@ function startScanner(){
 //-----------------------------------------
 // START APP
 //-----------------------------------------
+document.getElementById("stopBtn").addEventListener("click", function(){
 
+    if(scanner){
+
+        scanner.stop()
+.then(function(){
+
+    document.getElementById("status").innerHTML =
+    "⏹ Scanner Stopped";
+
+})
+.catch(function(err){
+
+    console.log(err);
+
+});
+
+    }
+
+});
 window.onload = function(){
 
     startScanner();
