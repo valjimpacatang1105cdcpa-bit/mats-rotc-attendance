@@ -294,7 +294,7 @@ const API_URL =
 
 let scanner = null;
 
- //-----------------------------------------
+//-----------------------------------------
 // START QR SCANNER
 //-----------------------------------------
 
@@ -302,18 +302,22 @@ function startScanner(){
 
     scanner = new Html5Qrcode("reader");
 
-    Html5Qrcode.getCameras().then(cameras=>{
+    Html5Qrcode.getCameras().then(function(cameras){
 
-        if(cameras.length==0){
+        if(cameras.length == 0){
 
-            document.getElementById("status").innerHTML="❌ No Camera Found";
+            document.getElementById("status").innerHTML =
+            "❌ No Camera Found";
+
             return;
 
         }
 
         scanner.start(
 
-            { facingMode:"environment" },
+            {
+                facingMode:"environment"
+            },
 
             {
                 fps:10,
@@ -324,18 +328,37 @@ function startScanner(){
 
                 scanner.stop();
 
-                document.getElementById("status").innerHTML="⏳ Processing...";
+                document.getElementById("status").innerHTML =
+                "⏳ Processing...";
 
-                // dito natin ilalagay ang API sa susunod na step
+                // API request ilalagay natin sa susunod
 
             }
 
         );
 
+    }).catch(function(err){
+
+        document.getElementById("status").innerHTML =
+        "❌ Camera Error";
+
+        console.log(err);
+
     });
 
 }
-</script>
+
+//-----------------------------------------
+// START APP
+//-----------------------------------------
+
+window.onload = function(){
+
+    startScanner();
+
+};
+
+ </script>
 
 </body>
 </html>
