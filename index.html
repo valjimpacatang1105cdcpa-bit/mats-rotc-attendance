@@ -8,7 +8,14 @@
 
 <title>MATS ROTC UNIT ATTENDANCE</title>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<!-- Google Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- QR Scanner -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
 
@@ -16,360 +23,254 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,Helvetica,sans-serif;
+font-family:'Poppins',sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#0b57d0,#1565c0);
-text-align:center;
-padding:30px;
-min-height:100vh;
-}
 
-header{
-background:white;
-color:#0d47a1;
-padding:25px;
-font-size:34px;
-font-weight:bold;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.25);
-margin-bottom:25px;
+background:#0b1e35;
+min-height:100vh;
+
+}
+ .overlay{
+
+width:100%;
+min-height:100vh;
+
+background:linear-gradient(
+rgba(5,20,40,.75),
+rgba(5,20,40,.75)
+);
+
+display:flex;
+justify-content:center;
+align-items:center;
+padding:30px;
+
 }
 
 .container{
-max-width:800px;
-margin:auto;
-background:white;
-padding:30px;
+
+width:100%;
+max-width:900px;
+
+background:rgba(255,255,255,.10);
+
+backdrop-filter:blur(12px);
+
 border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.30);
+
+padding:40px;
+
+text-align:center;
+
+box-shadow:0 10px 40px rgba(0,0,0,.45);
+
+border:1px solid rgba(255,255,255,.15);
+
 }
 
-h2{
-margin-bottom:15px;
+#logo{
+
+width:140px;
+
+margin-bottom:20px;
+
 }
 
+h1{
+
+color:white;
+
+font-size:38px;
+
+font-weight:700;
+
+margin-bottom:10px;
+
+}
+
+h3{
+
+color:#d7e3ff;
+
+font-weight:400;
+
+margin-bottom:25px;
+
+line-height:1.6;
+
+}
+
+#today{
+
+color:white;
+
+font-size:20px;
+
+margin-bottom:8px;
+
+}
+
+#clock{
+
+color:#ffd54f;
+
+font-size:34px;
+
+font-weight:bold;
+
+margin-bottom:30px;
+
+}   
 #reader{
+
 width:100%;
 max-width:500px;
-margin:20px auto;
+
+margin:30px auto;
+
 padding:15px;
-background:#fafafa;
+
+background:white;
+
 border-radius:15px;
-border:3px solid #1976d2;
-}
 
-button{
-padding:14px 30px;
-font-size:18px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-margin:10px;
-}
+border:4px solid #1976d2;
 
-#stopBtn{
-background:#d32f2f;
-color:white;
 }
 
 .status{
+
 margin-top:25px;
+
 padding:18px;
+
 border-radius:12px;
-font-size:24px;
+
+font-size:22px;
+
 font-weight:bold;
-transition:.3s;
-}
 
-.ready{
 background:#e8f5e9;
+
 color:#2e7d32;
-border:2px solid #4caf50;
-}
 
-.scanning{
-background:#fff8e1;
-color:#f57c00;
-border:2px solid #ff9800;
-}
-
-.success{
-background:#e3f2fd;
-color:#1565c0;
-border:2px solid #2196f3;
-}
-
-.error{
-background:#ffebee;
-color:#c62828;
-border:2px solid #f44336;
 }
 
 .student{
+
 margin-top:20px;
+
 font-size:30px;
+
 font-weight:bold;
-color:#0d47a1;
+
+color:white;
+
 }
 
 .time{
-font-size:20px;
+
 margin-top:10px;
-color:#555;
+
+font-size:22px;
+
+color:#ffd54f;
+
 }
 
-footer{
-margin-top:40px;
-padding:15px;
-background:#0d47a1;
+#stopBtn{
+
+margin-top:30px;
+
+padding:14px 35px;
+
+font-size:18px;
+
+font-weight:bold;
+
+border:none;
+
+border-radius:10px;
+
+background:#d32f2f;
+
 color:white;
+
+cursor:pointer;
+
+transition:.3s;
+
 }
 
+#stopBtn:hover{
+
+background:#b71c1c;
+
+}
 </style>
 
 </head>
 
-    <body>
+<body>
 
-<header>
+<div class="overlay">
 
-<div style="font-size:40px;">
-🎖️ MATS ROTC UNIT ATTENDANCE
-</div>
+    <div class="container">
 
-<div id="today"
-style="
-margin-top:10px;
-font-size:18px;
-font-weight:normal;">
-</div>
+    <img
+        id="logo"
+        src="logo.png"
+        alt="1105th CDC Logo">
 
-<div id="clock"
-style="
-font-size:30px;
-margin-top:8px;
-font-weight:bold;">
-</div>
+    <h1>MATS ROTC UNIT ATTENDANCE</h1>
 
-</header>
+    <h3>
+        1105th COMMUNITY DEFENSE CENTER<br>
+        11RCDG, RESCOM, PA
+    </h3>
 
-<div class="container">
+    <div id="today"></div>
 
-<h2>📷 Scan Student QR Code</h2>
-
-<p>Please place the QR Code inside the camera frame.</p>
+    <div id="clock"></div>
 
 <div id="reader"></div>
 
-<button id="stopBtn">
-
-⏹ Stop Scanner
-
-</button>
-
-<div id="status" class="status ready">
+<div id="status" class="status">
 
 🟢 READY TO SCAN
 
 </div>
 
-<div class="student" id="student"></div>
+<div id="student" class="student"></div>
 
-<div class="time" id="time"></div>
+<div id="time" class="time"></div>
+
+<button id="stopBtn">
+
+⏹ STOP SCANNER
+
+</button>
 
 </div>
 
-<footer>
-
-MATS QR Attendance System
-
-</footer>
+</div>
 
 <script>
 
-    const API_URL = "https://script.google.com/macros/s/AKfycbyjs55YWgb6owkyYckGoA_PlWS9VT0EdKvhjm8wEgZBcwCmfW_dsk4PwngTeurlFwBWVw/exec";
-
-let scanner;
-
-// ===== SOUND EFFECTS =====
-
-function playSuccessBeep() {
-
-    const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
-    audio.play();
-
-}
-
-function playDuplicateBeep() {
-
-    const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-    audio.play();
-
-}
-
-function playErrorBeep() {
-
-    const audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-    audio.play();
-
-}
-
-// ==========================
-
-function startScanner(){
-
-    if (scanner) {
-        return;
-    }
-
-    scanner = new Html5Qrcode("reader");
-
-    scanner.start(
-
-        {
-            facingMode:"environment"
-        },
-
-        {
-            fps:10,
-            qrbox:250
-        },
-
-        onScanSuccess
-
-    ).catch(function(err){
-
-        const status = document.getElementById("status");
-
-        status.className = "status error";
-        status.innerHTML = "❌ CAMERA ERROR";
-
-        console.log(err);
-
-    });
-
-}
-
-    function stopScanner(){
-
-    if(scanner){
-
-        scanner.stop()
-        .then(function(){
-
-            scanner.clear();
-            scanner = null;
-
-        })
-        .catch(function(err){
-
-            console.log(err);
-            scanner = null;
-
-        });
-
-    }
-
-}
-
-async function onScanSuccess(decodedText){
-
-    const status = document.getElementById("status");
-
-    status.className = "status scanning";
-    status.innerHTML = "🟡 SCANNING...";
-
-    stopScanner();
-
-    status.className = "status scanning";
-    status.innerHTML = "🟡 CHECKING ATTENDANCE...";
-
-    document.getElementById("student").innerHTML = "";
-    document.getElementById("time").innerHTML = "";
-
-    try{
-
-        const response = await fetch(
-            API_URL + "?qr=" + encodeURIComponent(decodedText)
-        );
-
-        const data = await response.json();
-
-        if (data.success) {
-
-            status.className = "status success";
-            status.innerHTML = "✅ ATTENDANCE RECORDED";
-
-            playSuccessBeep();
-
-            document.getElementById("student").innerHTML =
-                "👤 " + data.student;
-
-            document.getElementById("time").innerHTML =
-                "🕒 Time In: " + data.time;
-
-        } else if (data.alreadyRecorded) {
-
-            status.className = "status error";
-            status.innerHTML =
-                "⚠️ ATTENDANCE ALREADY RECORDED";
-
-            playDuplicateBeep();
-
-            document.getElementById("student").innerHTML =
-                "👤 " + data.student;
-
-            document.getElementById("time").innerHTML =
-                "🕒 First Scan: " + data.time;
-
-        } else {
-
-            status.className = "status error";
-            status.innerHTML = "❌ " + data.message;
-
-            playErrorBeep();
-
-            document.getElementById("student").innerHTML = "";
-            document.getElementById("time").innerHTML = "";
-
-        }
-
-    }catch(err){
-
-        status.className = "status error";
-        status.innerHTML = "❌ CONNECTION ERROR";
-
-        playErrorBeep();
-
-        console.log(err);
-
-    }
-
-    setTimeout(function(){
-
-        status.className = "status ready";
-        status.innerHTML = "🟢 READY TO SCAN";
-
-        startScanner();
-
-    },3000);
-
-}
-
-    // ===== LIVE DATE & CLOCK =====
-
-function updateClock() {
+function updateClock(){
 
     const now = new Date();
 
     document.getElementById("today").innerHTML =
         now.toLocaleDateString("en-US",{
+
             weekday:"long",
             year:"numeric",
             month:"long",
             day:"numeric"
+
         });
 
     document.getElementById("clock").innerHTML =
@@ -381,31 +282,7 @@ setInterval(updateClock,1000);
 
 updateClock();
 
-// =============================
-
-// Auto start scanner when page loads
-
-window.onload = function(){
-
-    startScanner();
-
-};
-
-// Stop Scanner Button
-
-document.getElementById("stopBtn").addEventListener("click",function(){
-
-    stopScanner();
-
-    const status=document.getElementById("status");
-
-    status.className="status error";
-    status.innerHTML="⏹ SCANNER STOPPED";
-
-});
-
 </script>
 
 </body>
-
 </html>
