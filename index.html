@@ -4,27 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<header>
-
-<div style="font-size:40px;">
-🎖️ MATS ROTC UNIT ATTENDANCE
-</div>
-
-<div id="today"
-style="
-margin-top:10px;
-font-size:18px;
-font-weight:normal;">
-</div>
-
-<div id="clock"
-style="
-font-size:30px;
-margin-top:8px;
-font-weight:bold;">
-</div>
-
-</header>
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
@@ -145,18 +124,6 @@ border:2px solid #f44336;
 
 }
 
-.success{
-
-color:green;
-
-}
-
-.error{
-
-color:red;
-
-}
-
 .student{
 margin-top:20px;
 font-size:30px;
@@ -190,16 +157,11 @@ color:white;
 <h2>📷 Scan Student QR Code</h2>
 <p>Please place the QR Code inside the camera frame.</p>
 <div id="reader"></div>
-
-<button id="startBtn">
-
-Start Scanner
-
-</button>
+    
 
 <button id="stopBtn">
 
-Stop Scanner
+⏹ Stop Scanner
 
 </button>
 
@@ -226,15 +188,42 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyjs55YWgb6owkyYckGoA_P
 
 let scanner;
 
-function startScanner(){
+// ===== SOUND EFFECTS =====
+
+function playSuccessBeep() {
+
+    const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+    audio.play();
+
+}
+
+function playDuplicateBeep() {
+
+    const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+    audio.play();
+
+}
+
+function playErrorBeep() {
+
+    const audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+    audio.play();
+
+}
+
+// ==========================
+
+{
+facingMode:"environment"
+},function startScanner(){
+
+if (scanner) {
+    return;
+}
 
 scanner = new Html5Qrcode("reader");
 
 scanner.start(
-
-{
-facingMode:"environment"
-},
 
 {
 fps:10,
@@ -251,7 +240,11 @@ function stopScanner(){
 
 if(scanner){
 
-scanner.stop();
+scanner.stop().then(function(){
+
+scanner = null;
+
+});
 
 }
 
@@ -281,25 +274,31 @@ if (data.success) {
     status.className = "status success";
     status.innerHTML = "✅ ATTENDANCE RECORDED";
 
-    document.getElementById("student").innerHTML = data.student;
+    playSuccessBeep();
+
+    document.getElementById("student").innerHTML = "👤 " + data.student;
 
     document.getElementById("time").innerHTML =
-        "Time In: " + data.time;
+        "🕒 Time In: " + data.time;
 
 } else if (data.alreadyRecorded) {
 
     status.className = "status error";
     status.innerHTML = "⚠️ ATTENDANCE ALREADY RECORDED";
 
-    document.getElementById("student").innerHTML = data.student;
+    playDuplicateBeep();
+
+    document.getElementById("student").innerHTML = "👤 " + data.student;
 
     document.getElementById("time").innerHTML =
-        "First Scan: " + data.time;
+        "🕒 First Scan: " + data.time;
 
 } else {
 
     status.className = "status error";
     status.innerHTML = "❌ " + data.message;
+
+    playErrorBeep();
 
     document.getElementById("student").innerHTML = "";
 
@@ -307,16 +306,12 @@ if (data.success) {
 
 }
 
-}else{
-
-status.className = "status error";
-status.innerHTML = "❌ " + data.message;
-}
-
 }catch(err){
 
 status.className = "status error";
 status.innerHTML = "❌ CONNECTION ERROR";
+
+playErrorBeep();
 }
 
 setTimeout(function(){
@@ -352,9 +347,21 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // =============================
-    document.getElementById("startBtn").addEventListener("click",function(){
 
-startScanner();
+    // Auto start scanner when page loads
+window.onload = function () {
+    startScanner();
+};
+
+    // Restart scanner after stopping
+document.getElementById("stopBtn").addEventListener("click", function () {
+
+    stopScanner();
+
+    const status = document.getElementById("status");
+
+    status.className = "status error";
+    status.innerHTML = "⏹ SCANNER STOPPED";
 
 });
 
