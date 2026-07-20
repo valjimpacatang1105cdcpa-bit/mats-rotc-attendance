@@ -4,8 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MATS ROTC UNIT ATTENDANCE</title>
+<header>
 
+<div style="font-size:40px;">
+🎖️ MATS ROTC UNIT ATTENDANCE
+</div>
+
+<div id="today"
+style="
+margin-top:10px;
+font-size:18px;
+font-weight:normal;">
+</div>
+
+<div id="clock"
+style="
+font-size:30px;
+margin-top:8px;
+font-weight:bold;">
+</div>
+
+</header>
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
@@ -249,6 +268,30 @@ startScanner();
 },3000);
 
 }
+    // ===== LIVE DATE & CLOCK =====
+
+function updateClock() {
+
+  const now = new Date();
+
+  document.getElementById("today").innerHTML =
+    now.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+
+  document.getElementById("clock").innerHTML =
+    now.toLocaleTimeString("en-US");
+
+}
+
+setInterval(updateClock, 1000);
+
+updateClock();
+
+// =============================
     document.getElementById("startBtn").addEventListener("click",function(){
 
 startScanner();
