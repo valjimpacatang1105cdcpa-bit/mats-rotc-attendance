@@ -258,9 +258,15 @@ scanner.stop();
 }
     async function onScanSuccess(decodedText){
 
+const status = document.getElementById("status");
+
+status.className = "status scanning";
+status.innerHTML = "🟡 SCANNING...";
+
 stopScanner();
 
-document.getElementById("result").innerHTML="⏳ Checking attendance...";
+status.className = "status scanning";
+status.innerHTML = "🟡 CHECKING ATTENDANCE...";
 document.getElementById("student").innerHTML="";
 document.getElementById("time").innerHTML="";
 
@@ -272,30 +278,32 @@ const data = await response.json();
 
 if(data.success){
 
-document.getElementById("result").innerHTML="<span class='success'>✅ Attendance Recorded</span>";
-
+status.className = "status success";
+status.innerHTML = "✅ ATTENDANCE RECORDED";
 document.getElementById("student").innerHTML=data.student;
 
 document.getElementById("time").innerHTML="Time In: "+data.time;
 
 }else{
 
-document.getElementById("result").innerHTML="<span class='error'>❌ "+data.message+"</span>";
-
+status.className = "status error";
+status.innerHTML = "❌ " + data.message;
 }
 
 }catch(err){
 
-document.getElementById("result").innerHTML="<span class='error'>Connection Error</span>";
-
+status.className = "status error";
+status.innerHTML = "❌ CONNECTION ERROR";
 }
 
 setTimeout(function(){
 
+status.className = "status ready";
+status.innerHTML = "🟢 READY TO SCAN";
+
 startScanner();
 
 },3000);
-
 }
     // ===== LIVE DATE & CLOCK =====
 
