@@ -9,52 +9,115 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
 body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f4f4f4;
-    text-align:center;
+background:#f2f2f2;
+text-align:center;
 }
 
 header{
-    background:#0B57D0;
-    color:white;
-    padding:20px;
-    font-size:28px;
-    font-weight:bold;
+background:#0d47a1;
+color:white;
+padding:20px;
+font-size:32px;
+font-weight:bold;
+}
+
+.container{
+max-width:700px;
+margin:30px auto;
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 5px 20px rgba(0,0,0,.2);
+}
+
+h2{
+margin-bottom:15px;
 }
 
 #reader{
-    width:340px;
-    margin:30px auto;
-}
-
-#result{
-    width:340px;
-    margin:auto;
-    padding:15px;
-    border-radius:10px;
-    display:none;
-    font-size:20px;
-    font-weight:bold;
-}
-
-.success{
-    background:#d4edda;
-    color:#155724;
-}
-
-.error{
-    background:#f8d7da;
-    color:#721c24;
+width:100%;
+max-width:500px;
+margin:auto;
 }
 
 button{
-    padding:12px 25px;
-    font-size:18px;
-    margin-top:20px;
-    cursor:pointer;
+
+padding:14px 30px;
+font-size:18px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin:10px;
+
 }
+
+#startBtn{
+
+background:#1976d2;
+color:white;
+
+}
+
+#stopBtn{
+
+background:#d32f2f;
+color:white;
+
+}
+
+#result{
+
+margin-top:25px;
+font-size:22px;
+font-weight:bold;
+
+}
+
+.success{
+
+color:green;
+
+}
+
+.error{
+
+color:red;
+
+}
+
+.student{
+
+margin-top:15px;
+font-size:24px;
+
+}
+
+.time{
+
+font-size:18px;
+margin-top:10px;
+color:#666;
+
+}
+
+footer{
+
+margin-top:40px;
+padding:15px;
+background:#0d47a1;
+color:white;
+
+}
+
 </style>
 
 </head>
@@ -62,62 +125,128 @@ button{
 <body>
 
 <header>
+
 🎖️ MATS ROTC UNIT ATTENDANCE
+
 </header>
+
+<div class="container">
+
+<h2>QR Attendance Scanner</h2>
 
 <div id="reader"></div>
 
+<button id="startBtn">
+
+Start Scanner
+
+</button>
+
+<button id="stopBtn">
+
+Stop Scanner
+
+</button>
+
 <div id="result"></div>
 
+<div class="student" id="student"></div>
+
+<div class="time" id="time"></div>
+
+</div>
+
+<footer>
+
+MATS QR Attendance System
+
+</footer>
 <script>
 
-function show(msg,type){
+const API_URL = "https://script.google.com/macros/s/AKfycbyjs55YWgb6owkyYckGoA_PlWS9VT0EdKvhjm8wEgZBcwCmfW_dsk4PwngTeurlFwBWVw/exec";
 
-    const r=document.getElementById("result");
+let scanner;
 
-    r.className=type;
-    r.style.display="block";
-    r.innerHTML=msg;
+function startScanner(){
+
+scanner = new Html5Qrcode("reader");
+
+scanner.start(
+
+{
+facingMode:"environment"
+},
+
+{
+fps:10,
+qrbox:250
+},
+
+onScanSuccess
+
+);
 
 }
 
-const scanner=new Html5Qrcode("reader");
+function stopScanner(){
 
-Html5Qrcode.getCameras().then(cameras=>{
+if(scanner){
 
-    if(cameras.length){
+scanner.stop();
 
-        scanner.start(
+}
 
-            cameras[0].id,
+}
+    async function onScanSuccess(decodedText){
 
-            {
-                fps:10,
-                qrbox:250
-            },
+stopScanner();
 
-            qrCodeMessage=>{
+document.getElementById("result").innerHTML="⏳ Checking attendance...";
+document.getElementById("student").innerHTML="";
+document.getElementById("time").innerHTML="";
 
-                scanner.stop();
+try{
 
-                show(
-                    "QR Detected:<br><br>"+qrCodeMessage,
-                    "success"
-                );
+const response = await fetch(API_URL + "?qr=" + encodeURIComponent(decodedText));
 
-            }
+const data = await response.json();
 
-        );
+if(data.success){
 
-    }else{
+document.getElementById("result").innerHTML="<span class='success'>✅ Attendance Recorded</span>";
 
-        show("No Camera Found","error");
+document.getElementById("student").innerHTML=data.student;
 
-    }
+document.getElementById("time").innerHTML="Time In: "+data.time;
 
-}).catch(err=>{
+}else{
 
-    show(err,"error");
+document.getElementById("result").innerHTML="<span class='error'>❌ "+data.message+"</span>";
+
+}
+
+}catch(err){
+
+document.getElementById("result").innerHTML="<span class='error'>Connection Error</span>";
+
+}
+
+setTimeout(function(){
+
+startScanner();
+
+},3000);
+
+}
+    document.getElementById("startBtn").addEventListener("click",function(){
+
+startScanner();
+
+});
+
+document.getElementById("stopBtn").addEventListener("click",function(){
+
+stopScanner();
 
 });
 
