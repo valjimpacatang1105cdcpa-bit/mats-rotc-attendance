@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Phone QR Test</title>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<style>
+
+body{
+
+margin:0;
+padding:20px;
+
+background:white;
+
+text-align:center;
+
+font-family:Arial;
+
+}
+
+#reader{
+
+width:350px;
+
+margin:auto;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Phone QR Test</h2>
+
+<div id="reader"></div>
+
+<script>
+
+const scanner = new Html5Qrcode("reader");
+
+scanner.start(
+
+{
+    facingMode:"environment"
+},
+
+{
+    fps:10,
+    qrbox:250
+},
+
+function(decodedText){
+
+    alert(decodedText);
+
+}
+
+);
+
+</script>
+
+</body>
+</html>
