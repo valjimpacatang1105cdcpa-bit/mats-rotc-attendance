@@ -28,3 +28,29 @@ if (isMobile) {
     };
 
 }
+//-----------------------------------------
+// PHONE DEBUG
+//-----------------------------------------
+
+if (isMobile) {
+
+    console.log("Phone Module Loaded");
+
+    navigator.mediaDevices.enumerateDevices()
+    .then(function(devices){
+
+        console.log("Available Devices:");
+
+        devices.forEach(function(device){
+
+            console.log(
+                device.kind,
+                device.label,
+                device.deviceId
+            );
+
+        });
+
+    });
+
+}
