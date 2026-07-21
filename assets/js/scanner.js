@@ -14,19 +14,32 @@ function startScanner() {
 
     scanner.start(
 
-        window.CAMERA_CONFIG,
+    {
+        facingMode: "environment"
+    },
 
-        {
-            fps: 10,
-            qrbox: 250
+    {
+        fps: 10,
+
+        qrbox: {
+            width: 250,
+            height: 250
         },
 
-        onScanSuccess
+        aspectRatio: 1,
 
-    ).then(function () {
+        experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+        }
+    },
+
+    onScanSuccess
+)
+    
+    .then(function () {
 
         scannerRunning = true;
-        setStatus("🟢 scanning");
+        setStatus("🟢 Ready");
 
     }).catch(function (err) {
 
@@ -92,7 +105,7 @@ async function onScanSuccess(decodedText) {
     setTimeout(async function () {
 
         clearStudent();
-        setStatus("🟢 scanning");
+        setStatus("🟢 Ready");
 
         try {
 
