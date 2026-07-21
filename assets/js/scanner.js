@@ -86,12 +86,6 @@ async function onScanSuccess(decodedText) {
 
 }
 
-window.onload = function () {
-
-    startScanner();
-
-};
-
 document.getElementById("stopBtn").addEventListener("click", function () {
 
     stopScanner();
