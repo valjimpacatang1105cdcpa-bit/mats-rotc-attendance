@@ -24,7 +24,8 @@ function startScanner() {
             fps: 10,
             qrbox: 250
         },
-
+        
+stopScanner();
         onScanSuccess
 
     ).catch(function (err) {
