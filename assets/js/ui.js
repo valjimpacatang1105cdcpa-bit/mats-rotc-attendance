@@ -18,3 +18,8 @@ function clearStudent(){
     setStudent("");
     setTime("");
 }
+function clearUI() {
+    setStudent("");
+    setTime("");
+    setStatus("🟢 READY TO SCAN");
+}
