@@ -3,156 +3,98 @@
 //-----------------------------------------
 
 let scanner = null;
-let scanning = false;
 
-async function startScanner() {
+function startScanner() {
 
     if (scanner) {
         try {
-            await scanner.stop();
-        } catch(e){}
+            scanner.stop();
+        } catch (e) {}
     }
 
     scanner = new Html5Qrcode("reader");
 
     scanner.start(
+
         {
-            facingMode: { exact: "environment" }
-        },
-        {
-    fps: 20,
-    qrbox: {
-        width: 300,
-        height: 300
-    },
-    aspectRatio: 1.0,
-    disableFlip: false
-},
-
-        async function(decodedText){
-
-            if(scanning) return;
-
-            scanning = true;
-
-            setStatus("⏳ Processing...");
-
-            scanner.pause(true);
-
-            try{
-
-                const data = await sendAttendance(decodedText);
-
-                if(data.success){
-
-                    setStatus("✅ " + data.message);
-                    setStudent(data.student);
-                    setTime(data.time);
-
-                }else{
-
-                    setStatus("❌ " + data.message);
-
-                }
-
-            }catch(err){
-
-                console.log(err);
-
-                setStatus("❌ Connection Error");
-
-            }
-
-            setTimeout(function(){
-
-                clearUI();
-
-                scanning = false;
-
-                scanner.resume();
-
-            },3000);
-
+            facingMode: "environment"
         },
 
-        function(errorMessage){
-            // ignore scan errors
-        }
+        {
+            fps: 10,
+            qrbox: 250
+        },
 
-    ).catch(async function(){
+        onScanSuccess
 
-        // Android fallback
-        try{
+    ).catch(function (err) {
 
-            await scanner.start(
-
-                { facingMode:"environment" },
-
-                {
-    fps: 20,
-    qrbox: {
-        width: 300,
-        height: 300
-    },
-    aspectRatio: 1.0,
-    disableFlip: false
-},
-                async function(decodedText){
-
-                    if(scanning) return;
-
-                    scanning = true;
-
-                    setStatus("⏳ Processing...");
-
-                    scanner.pause(true);
-
-                    try{
-
-                        const data = await sendAttendance(decodedText);
-
-                        if(data.success){
-
-                            setStatus("✅ " + data.message);
-                            setStudent(data.student);
-                            setTime(data.time);
-
-                        }else{
-
-                            setStatus("❌ " + data.message);
-
-                        }
-
-                    }catch(err){
-
-                        console.log(err);
-
-                        setStatus("❌ Connection Error");
-
-                    }
-
-                    setTimeout(function(){
-
-                        clearUI();
-
-                        scanning = false;
-
-                        scanner.resume();
-
-                    },3000);
-
-                }
-
-            );
-
-        }catch(err){
-
-            console.log(err);
-
-            setStatus("❌ Camera Error");
-
-        }
+        console.log(err);
+        setStatus("❌ Camera Error");
 
     });
 
 }
+
+function stopScanner() {
+
+    if (scanner) {
+
+        scanner.stop().catch(function(){});
+
+    }
+
+}
+
+async function onScanSuccess(decodedText) {
+
+    stopScanner();
+
+    setStatus("⏳ Processing...");
+    clearStudent();
+
+    try {
+
+        const data = await sendAttendance(decodedText);
+
+        if (data.success) {
+
+            setStatus("✅ " + data.message);
+            setStudent(data.student);
+            setTime(data.time);
+
+        } else {
+
+            setStatus("❌ " + data.message);
+
+        }
+
+    } catch (err) {
+
+        console.log(err);
+        setStatus("❌ Connection Error");
+
+    }
+
+    setTimeout(function () {
+
+        clearStudent();
+        setStatus("🟢 READY TO SCAN");
+        startScanner();
+
+    }, 3000);
+
+}
+
+window.onload = function () {
+
+    startScanner();
+
+};
+
+document.getElementById("stopBtn").addEventListener("click", function () {
+
+    stopScanner();
+    setStatus("⏹ Scanner Stopped");
+
+});
