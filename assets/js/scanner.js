@@ -28,7 +28,7 @@ function startScanner() {
     ).then(function () {
 
         scannerRunning = true;
-        setStatus("🟢 click START");
+        setStatus("🟢 scanning");
 
     }).catch(function (err) {
 
@@ -94,7 +94,7 @@ async function onScanSuccess(decodedText) {
     setTimeout(async function () {
 
         clearStudent();
-        setStatus("🟢 click START");
+        setStatus("🟢 scanning");
 
         try {
 
