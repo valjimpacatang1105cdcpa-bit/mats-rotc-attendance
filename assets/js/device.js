@@ -3,4 +3,8 @@
 //-----------------------------------------
 
 const isMobile =
-/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+);
+
+console.log("Device:", isMobile ? "Mobile" : "Desktop");
