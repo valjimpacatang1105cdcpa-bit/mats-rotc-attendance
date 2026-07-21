@@ -79,7 +79,7 @@ async function onScanSuccess(decodedText) {
 
         clearStudent();
         setStatus("🟢 READY TO SCAN");
-        startScanner();
+        
 
     }, 3000);
 
