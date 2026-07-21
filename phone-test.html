@@ -13,24 +13,24 @@
 <style>
 
 body{
-
 margin:0;
 padding:20px;
-
 background:white;
-
 text-align:center;
-
 font-family:Arial;
-
 }
 
 #reader{
-
 width:350px;
-
 margin:auto;
+}
 
+#result{
+margin-top:20px;
+font-size:18px;
+font-weight:bold;
+color:green;
+white-space:pre-wrap;
 }
 
 </style>
@@ -43,7 +43,37 @@ margin:auto;
 
 <div id="reader"></div>
 
+<div id="result">
+Waiting...
+</div>
+
 <script>
+
+//==============================
+// ILAGAY DITO ANG WEB APP URL
+//==============================
+
+const WEB_APP_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+
+//==============================
+
+async function sendAttendance(qr){
+
+    const response = await fetch(WEB_APP_URL,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+
+            qr:qr
+
+        })
+
+    });
+
+    return await response.json();
+
+}
 
 const scanner = new Html5Qrcode("reader");
 
@@ -58,9 +88,28 @@ scanner.start(
     qrbox:250
 },
 
-function(decodedText){
+async function(decodedText){
 
-    alert(decodedText);
+    scanner.pause(true);
+
+    document.getElementById("result").innerHTML =
+    "Sending...";
+
+    try{
+
+        const data = await sendAttendance(decodedText);
+
+        document.getElementById("result").innerHTML =
+        JSON.stringify(data,null,2);
+
+    }
+
+    catch(err){
+
+        document.getElementById("result").innerHTML =
+        "ERROR:\n" + err;
+
+    }
 
 }
 
