@@ -1,56 +1,88 @@
 //-----------------------------------------
-// PHONE MODULE
+// PHONE SCANNER (ORIGINAL VERSION)
 //-----------------------------------------
 
 if (isMobile) {
 
-    console.log("Phone Module Loaded");
+    console.log("📱 Phone Scanner Active");
 
-} else {
+    function startPhoneScanner() {
 
-    console.log("Desktop - Phone Module Disabled");
+        scanner = new Html5Qrcode("reader");
 
-}
-//-----------------------------------------
-// PHONE CAMERA SETTINGS
-//-----------------------------------------
+        scanner.start(
 
-if (isMobile) {
+            {
+                facingMode: "environment"
+            },
 
-    window.CAMERA_CONFIG = {
-        facingMode: "environment"
-    };
+            {
+                fps: 10,
+                qrbox: 250
+            },
 
-} else {
+            async function(decodedText){
 
-    window.CAMERA_CONFIG = {
-        facingMode: "environment"
-    };
+                stopPhoneScanner();
 
-}
-//-----------------------------------------
-// PHONE DEBUG
-//-----------------------------------------
+                setStatus("⏳ Processing...");
+                clearStudent();
 
-if (isMobile) {
+                try{
 
-    console.log("Phone Module Loaded");
+                    const data = await sendAttendance(decodedText);
 
-    navigator.mediaDevices.enumerateDevices()
-    .then(function(devices){
+                    if(data.success){
 
-        console.log("Available Devices:");
+                        setStatus("✅ " + data.message);
+                        setStudent(data.student);
+                        setTime(data.time);
 
-        devices.forEach(function(device){
+                    }else{
 
-            console.log(
-                device.kind,
-                device.label,
-                device.deviceId
-            );
+                        setStatus("❌ " + data.message);
+
+                    }
+
+                }catch(err){
+
+                    console.log(err);
+                    setStatus("❌ Connection Error");
+
+                }
+
+                setTimeout(function(){
+
+                    clearStudent();
+                    setStatus("🟢 READY TO SCAN");
+
+                    startPhoneScanner();
+
+                },3000);
+
+            }
+
+        ).catch(function(err){
+
+            console.log(err);
+            setStatus("❌ Camera Error");
 
         });
 
-    });
+    }
+
+    function stopPhoneScanner(){
+
+        if(scanner){
+
+            scanner.stop().catch(function(){});
+
+        }
+
+    }
+
+    // Override desktop functions
+    startScanner = startPhoneScanner;
+    stopScanner = stopPhoneScanner;
 
 }
