@@ -324,15 +324,20 @@ function startScanner(){
                 qrbox:250
             },
 
-            function(decodedText){
+            let scanning = false;
 
-    scanner.stop().catch(function(){});
+function(decodedText){
+
+    if(scanning) return;
+
+    scanning = true;
 
     document.getElementById("status").innerHTML =
     "⏳ Processing...";
 
-    fetch(API_URL + "?qr=" + encodeURIComponent(decodedText))
+    scanner.pause(true);
 
+    fetch(API_URL + "?qr=" + encodeURIComponent(decodedText))
     .then(response => response.json())
 
     .then(data => {
@@ -362,7 +367,8 @@ data.time || "";
             document.getElementById("status").innerHTML =
             "🟢 READY TO SCAN";
 
-            startScanner();
+            scanning = false;
+startScanner();
 
         },3000);
 
@@ -380,7 +386,8 @@ data.time || "";
             document.getElementById("status").innerHTML =
             "🟢 READY TO SCAN";
 
-            startScanner();
+            scanning = false;
+startScanner();
 
         },3000);
 
