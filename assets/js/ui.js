@@ -14,4 +14,7 @@ function setTime(time){
     document.getElementById("time").innerHTML = time || "";
 }
 
-function clear
+function clearStudent(){
+    setStudent("");
+    setTime("");
+}
