@@ -25,7 +25,6 @@ function startScanner() {
             qrbox: 250
         },
         
-stopScanner();
         onScanSuccess
 
     ).catch(function (err) {
@@ -85,11 +84,11 @@ const t2 = performance.now();
 console.log("Total before restart:", (t2 - t0).toFixed(0), "ms");
     setTimeout(function () {
 
-        clearStudent();
-        setStatus("🟢 READY TO SCAN");
-        
+    clearStudent();
+    setStatus("🟢 READY TO SCAN");
+    startScanner();
 
-    }, 3000);
+}, 3000);
 
 }
 
