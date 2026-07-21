@@ -27,7 +27,7 @@ async function startScanner() {
     },
     aspectRatio: 1.0,
     disableFlip: false
-}
+},
 
         async function(decodedText){
 
@@ -96,7 +96,7 @@ async function startScanner() {
     },
     aspectRatio: 1.0,
     disableFlip: false
-}
+},
                 async function(decodedText){
 
                     if(scanning) return;
