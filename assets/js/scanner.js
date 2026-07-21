@@ -3,15 +3,12 @@
 //-----------------------------------------
 
 let scanner = null;
-let scannerEnabled = false;
-
-//-----------------------------------------
-// START SCANNER
-//-----------------------------------------
+let scannerRunning = false;
 
 function startScanner() {
 
-    if (scanner) return;
+    // Huwag mag-start kung tumatakbo na
+    if (scannerRunning) return;
 
     scanner = new Html5Qrcode("reader");
 
@@ -28,47 +25,45 @@ function startScanner() {
 
         onScanSuccess
 
-    ).catch(function (err) {
+    ).then(function () {
+
+        scannerRunning = true;
+        setStatus("🟢 READY TO SCAN");
+
+    }).catch(function (err) {
 
         console.log(err);
         setStatus("❌ Camera Error");
-
-        scanner = null;
 
     });
 
 }
 
-//-----------------------------------------
-// STOP SCANNER
-//-----------------------------------------
+function stopScanner() {
 
-async function stopScanner() {
+    if (!scanner || !scannerRunning) return;
 
-    if (!scanner) return;
+    scanner.stop().then(function () {
 
-    try {
+        scannerRunning = false;
+        setStatus("⏹ Scanner Stopped");
 
-        await scanner.stop();
-        await scanner.clear();
+    }).catch(function (err) {
 
-    } catch (e) {
+        console.log(err);
 
-        console.log(e);
-
-    }
-
-    scanner = null;
+    });
 
 }
 
-//-----------------------------------------
-// QR SUCCESS
-//-----------------------------------------
-
 async function onScanSuccess(decodedText) {
 
-    await stopScanner();
+    // Iwas double scan
+    if (!scannerRunning) return;
+
+    scannerRunning = false;
+
+    await scanner.pause(true);
 
     setStatus("⏳ Processing...");
     clearStudent();
@@ -96,18 +91,19 @@ async function onScanSuccess(decodedText) {
 
     }
 
-    setTimeout(function () {
+    setTimeout(async function () {
 
         clearStudent();
+        setStatus("🟢 READY TO SCAN");
 
-        if (scannerEnabled) {
+        try {
 
-            setStatus("🟢 READY TO SCAN");
-            startScanner();
+            await scanner.resume();
+            scannerRunning = true;
 
-        } else {
+        } catch (err) {
 
-            setStatus("⏹ Scanner Stopped");
+            console.log(err);
 
         }
 
@@ -121,10 +117,6 @@ async function onScanSuccess(decodedText) {
 
 document.getElementById("startBtn").addEventListener("click", function () {
 
-    scannerEnabled = true;
-
-    setStatus("🟢 READY TO SCAN");
-
     startScanner();
 
 });
@@ -133,12 +125,8 @@ document.getElementById("startBtn").addEventListener("click", function () {
 // STOP BUTTON
 //-----------------------------------------
 
-document.getElementById("stopBtn").addEventListener("click", async function () {
+document.getElementById("stopBtn").addEventListener("click", function () {
 
-    scannerEnabled = false;
-
-    await stopScanner();
-
-    setStatus("⏹ Scanner Stopped");
+    stopScanner();
 
 });
