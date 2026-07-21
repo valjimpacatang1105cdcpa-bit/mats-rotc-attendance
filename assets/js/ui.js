@@ -21,5 +21,5 @@ function clearStudent(){
 function clearUI() {
     setStudent("");
     setTime("");
-    setStatus("🟢 click START");
+    setStatus("🟢 scanning");
 }
