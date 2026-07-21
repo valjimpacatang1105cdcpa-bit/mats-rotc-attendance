@@ -20,9 +20,14 @@ async function startScanner() {
             facingMode: { exact: "environment" }
         },
         {
-            fps: 10,
-            qrbox: 250
-        },
+    fps: 20,
+    qrbox: {
+        width: 300,
+        height: 300
+    },
+    aspectRatio: 1.0,
+    disableFlip: false
+}
 
         async function(decodedText){
 
@@ -84,10 +89,14 @@ async function startScanner() {
                 { facingMode:"environment" },
 
                 {
-                    fps:10,
-                    qrbox:250
-                },
-
+    fps: 20,
+    qrbox: {
+        width: 300,
+        height: 300
+    },
+    aspectRatio: 1.0,
+    disableFlip: false
+}
                 async function(decodedText){
 
                     if(scanning) return;
