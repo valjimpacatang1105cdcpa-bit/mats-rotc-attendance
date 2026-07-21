@@ -6,12 +6,6 @@ let scanner = null;
 
 function startScanner() {
 
-    if (scanner) {
-        try {
-            scanner.stop();
-        } catch (e) {}
-    }
-
     scanner = new Html5Qrcode("reader");
 
     scanner.start(
@@ -24,7 +18,7 @@ function startScanner() {
             fps: 10,
             qrbox: 250
         },
-        
+
         onScanSuccess
 
     ).catch(function (err) {
@@ -40,7 +34,7 @@ function stopScanner() {
 
     if (scanner) {
 
-        scanner.stop().catch(function(){});
+        scanner.stop();
 
     }
 
@@ -48,18 +42,14 @@ function stopScanner() {
 
 async function onScanSuccess(decodedText) {
 
-const t0 = performance.now();
-console.log("QR detected");
-    
+    stopScanner();
+
     setStatus("⏳ Processing...");
     clearStudent();
 
     try {
 
         const data = await sendAttendance(decodedText);
-
-const t1 = performance.now();
-console.log("Google Script:", (t1 - t0).toFixed(0), "ms");
 
         if (data.success) {
 
@@ -79,22 +69,26 @@ console.log("Google Script:", (t1 - t0).toFixed(0), "ms");
         setStatus("❌ Connection Error");
 
     }
-    
-const t2 = performance.now();
-console.log("Total before restart:", (t2 - t0).toFixed(0), "ms");
+
     setTimeout(function () {
 
-    clearStudent();
-    setStatus("🟢 READY TO SCAN");
-    startScanner();
+        clearStudent();
+        setStatus("🟢 READY TO SCAN");
 
-}, 3000);
+        startScanner();
+
+    }, 3000);
 
 }
+
+//-----------------------------------------
+// STOP BUTTON
+//-----------------------------------------
 
 document.getElementById("stopBtn").addEventListener("click", function () {
 
     stopScanner();
+
     setStatus("⏹ Scanner Stopped");
 
 });
