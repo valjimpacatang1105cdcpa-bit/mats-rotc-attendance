@@ -48,7 +48,6 @@ function stopScanner() {
 
 async function onScanSuccess(decodedText) {
 
-    stopScanner();
 
     setStatus("⏳ Processing...");
     clearStudent();
