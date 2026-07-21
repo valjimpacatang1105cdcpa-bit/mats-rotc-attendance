@@ -49,13 +49,18 @@ function stopScanner() {
 
 async function onScanSuccess(decodedText) {
 
-
+const t0 = performance.now();
+console.log("QR detected");
+    
     setStatus("⏳ Processing...");
     clearStudent();
 
     try {
 
         const data = await sendAttendance(decodedText);
+
+const t1 = performance.now();
+console.log("Google Script:", (t1 - t0).toFixed(0), "ms");
 
         if (data.success) {
 
@@ -75,7 +80,9 @@ async function onScanSuccess(decodedText) {
         setStatus("❌ Connection Error");
 
     }
-
+    
+const t2 = performance.now();
+console.log("Total before restart:", (t2 - t0).toFixed(0), "ms");
     setTimeout(function () {
 
         clearStudent();
