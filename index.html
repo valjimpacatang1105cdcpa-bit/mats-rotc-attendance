@@ -293,7 +293,8 @@ const API_URL =
 //-----------------------------------------
 
 let scanner = null;
-
+let scanning = false;
+ 
 //-----------------------------------------
 // START QR SCANNER
 //-----------------------------------------
@@ -315,29 +316,28 @@ function startScanner(){
 
         scanner.start(
 
-            {
-                facingMode:"environment"
-            },
+    {
+        facingMode: "environment"
+    },
 
-            {
-                fps:10,
-                qrbox:250
-            },
+    {
+        fps: 10,
+        qrbox: 250
+    },
 
-            let scanning = false;
+    function(decodedText){
 
-function(decodedText){
+        if(scanning) return;
 
-    if(scanning) return;
+        scanning = true;
 
-    scanning = true;
+        document.getElementById("status").innerHTML =
+        "⏳ Processing...";
 
-    document.getElementById("status").innerHTML =
-    "⏳ Processing...";
+        scanner.pause(true);
 
-    scanner.pause(true);
-
-    fetch(API_URL + "?qr=" + encodeURIComponent(decodedText))
+        fetch(API_URL + "?qr=" + encodeURIComponent(decodedText))
+     
     .then(response => response.json())
 
     .then(data => {
