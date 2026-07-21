@@ -14,9 +14,7 @@ function startScanner() {
 
     scanner.start(
 
-        {
-            facingMode: "environment"
-        },
+        window.CAMERA_CONFIG,
 
         {
             fps: 10,
