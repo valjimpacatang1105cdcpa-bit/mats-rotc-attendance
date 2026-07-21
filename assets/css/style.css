@@ -26,3 +26,13 @@ margin-right:15px;
 background:#1b5e20;
 
 }
+#reader{
+    overflow: hidden;
+}
+
+#reader video{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+}
