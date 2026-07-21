@@ -1,10 +1,5 @@
-//-----------------------------------------
-// APP START
-//-----------------------------------------
-
 window.onload = function(){
 
-    startScanner();
+    setStatus("⏹ Click START SCANNER");
 
 };
-
