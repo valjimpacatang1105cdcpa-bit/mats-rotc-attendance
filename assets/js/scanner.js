@@ -3,8 +3,15 @@
 //-----------------------------------------
 
 let scanner = null;
+let scannerEnabled = false;
+
+//-----------------------------------------
+// START SCANNER
+//-----------------------------------------
 
 function startScanner() {
+
+    if (scanner) return;
 
     scanner = new Html5Qrcode("reader");
 
@@ -26,23 +33,42 @@ function startScanner() {
         console.log(err);
         setStatus("❌ Camera Error");
 
+        scanner = null;
+
     });
 
 }
 
-function stopScanner() {
+//-----------------------------------------
+// STOP SCANNER
+//-----------------------------------------
 
-    if (scanner) {
+async function stopScanner() {
 
-        scanner.stop();
+    if (!scanner) return;
+
+    try {
+
+        await scanner.stop();
+        await scanner.clear();
+
+    } catch (e) {
+
+        console.log(e);
 
     }
 
+    scanner = null;
+
 }
+
+//-----------------------------------------
+// QR SUCCESS
+//-----------------------------------------
 
 async function onScanSuccess(decodedText) {
 
-    stopScanner();
+    await stopScanner();
 
     setStatus("⏳ Processing...");
     clearStudent();
@@ -73,21 +99,45 @@ async function onScanSuccess(decodedText) {
     setTimeout(function () {
 
         clearStudent();
-        setStatus("🟢 READY TO SCAN");
 
-        startScanner();
+        if (scannerEnabled) {
+
+            setStatus("🟢 READY TO SCAN");
+            startScanner();
+
+        } else {
+
+            setStatus("⏹ Scanner Stopped");
+
+        }
 
     }, 3000);
 
 }
 
 //-----------------------------------------
+// START BUTTON
+//-----------------------------------------
+
+document.getElementById("startBtn").addEventListener("click", function () {
+
+    scannerEnabled = true;
+
+    setStatus("🟢 READY TO SCAN");
+
+    startScanner();
+
+});
+
+//-----------------------------------------
 // STOP BUTTON
 //-----------------------------------------
 
-document.getElementById("stopBtn").addEventListener("click", function () {
+document.getElementById("stopBtn").addEventListener("click", async function () {
 
-    stopScanner();
+    scannerEnabled = false;
+
+    await stopScanner();
 
     setStatus("⏹ Scanner Stopped");
 
